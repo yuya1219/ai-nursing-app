@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>履歴 - 看護記録AIアプリケーション</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="看護記録AI" height="40" class="d-inline-block align-text-top">
+        <span class="ms-2">看護記録AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="patient-form.html">患者情報入力</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="history.html">履歴</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="subscription.html">プラン</a>
+          </li>
+        </ul>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user me-2"></i><span id="userName">ユーザー</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
+            <li><a class="dropdown-item" href="history.html"><i class="fas fa-history me-2"></i>履歴</a></li>
+            <li><a class="dropdown-item" href="subscription.html"><i class="fas fa-crown me-2"></i>プラン</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>ログアウト</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="py-5">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>履歴</h1>
+        <div>
+          <a href="patient-form.html" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>新規作成
+          </a>
+        </div>
+      </div>
+      
+      <!-- 検索・フィルターセクション -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="患者名、病名などで検索..." id="searchInput">
+                <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="sortFilter">
+                <option value="date_desc">日付（新しい順）</option>
+                <option value="date_asc">日付（古い順）</option>
+                <option value="name_asc">患者名（昇順）</option>
+                <option value="name_desc">患者名（降順）</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="timeFilter">
+                <option value="all">すべての期間</option>
+                <option value="today">今日</option>
+                <option value="week">過去7日間</option>
+                <option value="month">過去30日間</option>
+                <option value="year">過去1年</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 履歴リスト -->
+      <div class="row" id="historyList">
+        <!-- 履歴アイテムはJavaScriptで動的に生成されます -->
+      </div>
+      
+      <!-- ページネーション -->
+      <nav aria-label="履歴ページネーション" class="mt-4">
+        <ul class="pagination justify-content-center" id="historyPagination">
+          <!-- ページネーションはJavaScriptで動的に生成されます -->
+        </ul>
+      </nav>
+      
+      <!-- 履歴制限の通知（無料プランのみ表示） -->
+      <div class="alert alert-info mt-4 d-none" id="historyLimitAlert">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-info-circle fa-2x me-3"></i>
+          <div>
+            <h5 class="alert-heading mb-1">履歴保存制限</h5>
+            <p class="mb-0">無料プランでは最大3件までの履歴を保存できます。さらに多くの履歴を保存するには、<a href="subscription.html" class="alert-link">プレミアムプラン</a>へのアップグレードをご検討ください。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 履歴削除確認モーダル -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteConfirmModalLabel">履歴の削除</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>この履歴を削除してもよろしいですか？この操作は元に戻せません。</p>
+          <p class="mb-0"><strong>患者名: </strong><span id="deletePatientName"></span></p>
+          <p class="mb-0"><strong>作成日: </strong><span id="deleteCreatedDate"></span></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">キャンセル</button>
+          <button type="button" class="btn btn-danger" id="confirmDeleteButton">削除</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>看護記録AI</h5>
+          <p class="text-muted">AIを活用した看護記録作成支援アプリケーション</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-decoration-none text-muted">ホーム</a></li>
+            <li><a href="patient-form.html" class="text-decoration-none text-muted">患者情報入力</a></li>
+            <li><a href="history.html" class="text-decoration-none text-muted">履歴</a></li>
+            <li><a href="subscription.html" class="text-decoration-none text-muted">プラン</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-envelope me-2"></i>info@nursing-ai.example.com</li>
+            <li><i class="fas fa-phone me-2"></i>03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0 text-muted">&copy; 2025 看護記録AI. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted">プライバシーポリシー</a></li>
+            <li class="list-inline-item"><a href="#" class="text-muted">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="js/history.js"></script>
+</body>
+</html>

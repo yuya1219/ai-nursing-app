@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>アセスメント結果 - 看護記録AIアプリケーション</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.0.0/dist/mermaid.min.js"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="看護記録AI" height="40" class="d-inline-block align-text-top">
+        <span class="ms-2">看護記録AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="patient-form.html">患者情報入力</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history.html">履歴</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="subscription.html">プラン</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <a href="login.html" class="btn btn-outline-primary me-2">ログイン</a>
+          <a href="register.html" class="btn btn-primary">新規登録</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">アセスメント結果</h1>
+      
+      <!-- 患者情報サマリー -->
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <div class="row align-items-center">
+            <div class="col-md-2 text-center mb-3 mb-md-0">
+              <img id="patientIconSummary" src="img/default-patient.png" alt="患者アイコン" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+            </div>
+            <div class="col-md-10">
+              <div class="row">
+                <div class="col-md-4 mb-2">
+                  <strong>氏名:</strong> <span id="patientNameSummary">--</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <strong>性別:</strong> <span id="genderSummary">--</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <strong>年齢:</strong> <span id="ageSummary">--</span>歳
+                </div>
+                <div class="col-md-4 mb-2">
+                  <strong>現病名:</strong> <span id="currentDiseaseSummary">--</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <strong>介護度:</strong> <span id="careLevelSummary">--</span>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <strong>キーパーソン:</strong> <span id="keyPersonSummary">--</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- タブメニュー -->
+      <ul class="nav nav-tabs mb-4" id="resultTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="assessment-tab" data-bs-toggle="tab" data-bs-target="#assessment" type="button" role="tab" aria-controls="assessment" aria-selected="true">
+            <i class="fas fa-clipboard-list me-2"></i>アセスメント
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="diagram-tab" data-bs-toggle="tab" data-bs-target="#diagram" type="button" role="tab" aria-controls="diagram" aria-selected="false">
+            <i class="fas fa-project-diagram me-2"></i>関連図
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="plan-tab" data-bs-toggle="tab" data-bs-target="#plan" type="button" role="tab" aria-controls="plan" aria-selected="false">
+            <i class="fas fa-tasks me-2"></i>看護計画
+          </button>
+        </li>
+      </ul>
+      
+      <!-- タブコンテンツ -->
+      <div class="tab-content" id="resultTabsContent">
+        <!-- アセスメントタブ -->
+        <div class="tab-pane fade show active" id="assessment" role="tabpanel" aria-labelledby="assessment-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="h4 mb-4">看護アセスメント</h2>
+              <div id="assessmentContent" class="assessment-result">
+                <div class="loading-container">
+                  <div class="loading-spinner"></div>
+                  <p class="loading-text">アセスメントを生成中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 関連図タブ -->
+        <div class="tab-pane fade" id="diagram" role="tabpanel" aria-labelledby="diagram-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="h4 mb-4">関連図</h2>
+              <div id="premiumLockMessage" class="alert alert-warning" style="display: none;">
+                <i class="fas fa-lock me-2"></i>関連図はプレミアム会員限定機能です。<a href="subscription.html" class="alert-link">アップグレード</a>して全機能をご利用ください。
+              </div>
+              <div id="diagramContent" class="relationship-diagram">
+                <div class="loading-container">
+                  <div class="loading-spinner"></div>
+                  <p class="loading-text">関連図を生成中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 看護計画タブ -->
+        <div class="tab-pane fade" id="plan" role="tabpanel" aria-labelledby="plan-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="h4 mb-4">看護計画</h2>
+              <div id="nursingPlanContent" class="nursing-plan-result">
+                <div class="loading-container">
+                  <div class="loading-spinner"></div>
+                  <p class="loading-text">看護計画を生成中...</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- アクションボタン -->
+      <div class="d-flex justify-content-center mt-4">
+        <button class="btn btn-outline-secondary me-2" id="editButton">
+          <i class="fas fa-edit me-2"></i>編集
+        </button>
+        <button class="btn btn-outline-secondary me-2" id="saveButton">
+          <i class="fas fa-save me-2"></i>保存
+        </button>
+        <button class="btn btn-outline-secondary me-2" id="printButton">
+          <i class="fas fa-print me-2"></i>印刷
+        </button>
+        <button class="btn btn-outline-secondary" id="shareButton">
+          <i class="fas fa-share-alt me-2"></i>共有
+        </button>
+      </div>
+      
+      <!-- 広告エリア -->
+      <div class="ad-container text-center p-3 bg-light rounded mt-5">
+        <p class="text-muted small mb-1">広告</p>
+        <div id="ad-placeholder" style="height: 90px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+          <span class="text-muted">Google Ads広告が表示されます</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>看護記録AI</h5>
+          <p class="text-muted">AIを活用した看護記録作成支援アプリケーション</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-decoration-none text-muted">ホーム</a></li>
+            <li><a href="patient-form.html" class="text-decoration-none text-muted">患者情報入力</a></li>
+            <li><a href="history.html" class="text-decoration-none text-muted">履歴</a></li>
+            <li><a href="subscription.html" class="text-decoration-none text-muted">プラン</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-envelope me-2"></i>info@nursing-ai.example.com</li>
+            <li><i class="fas fa-phone me-2"></i>03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0 text-muted">&copy; 2025 看護記録AI. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted">プライバシーポリシー</a></li>
+            <li class="list-inline-item"><a href="#" class="text-muted">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="js/result.js"></script>
+</body>
+</html>

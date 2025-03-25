@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理者ページ - 看護記録AIアプリケーション</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="看護記録AI" height="40" class="d-inline-block align-text-top">
+        <span class="ms-2">看護記録AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="patient-form.html">患者情報入力</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history.html">履歴</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="subscription.html">プラン</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-user-shield me-2"></i><span id="adminName">管理者</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuButton">
+              <li><a class="dropdown-item" href="admin.html"><i class="fas fa-cog me-2"></i>管理者ページ</a></li>
+              <li><a class="dropdown-item" href="#" id="logoutButton"><i class="fas fa-sign-out-alt me-2"></i>ログアウト</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="py-5">
+    <div class="container">
+      <h1 class="mb-4">管理者ページ</h1>
+      
+      <!-- ダッシュボード概要 -->
+      <div class="row mb-4">
+        <div class="col-md-3 mb-3 mb-md-0">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-users fa-3x text-primary mb-3"></i>
+              <h5>総ユーザー数</h5>
+              <p class="display-6 fw-bold" id="totalUsers">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-crown fa-3x text-warning mb-3"></i>
+              <h5>プレミアムユーザー</h5>
+              <p class="display-6 fw-bold" id="premiumUsers">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 mb-3 mb-md-0">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-file-medical fa-3x text-success mb-3"></i>
+              <h5>今日の生成数</h5>
+              <p class="display-6 fw-bold" id="todayGenerations">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center">
+              <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+              <h5>月間収益</h5>
+              <p class="display-6 fw-bold" id="monthlyRevenue">¥0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- タブメニュー -->
+      <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" aria-controls="users" aria-selected="true">
+            <i class="fas fa-users me-2"></i>ユーザー管理
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="subscriptions-tab" data-bs-toggle="tab" data-bs-target="#subscriptions" type="button" role="tab" aria-controls="subscriptions" aria-selected="false">
+            <i class="fas fa-credit-card me-2"></i>サブスクリプション
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="usage-tab" data-bs-toggle="tab" data-bs-target="#usage" type="button" role="tab" aria-controls="usage" aria-selected="false">
+            <i class="fas fa-chart-bar me-2"></i>利用統計
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">
+            <i class="fas fa-cog me-2"></i>システム設定
+          </button>
+        </li>
+      </ul>
+      
+      <!-- タブコンテンツ -->
+      <div class="tab-content" id="adminTabsContent">
+        <!-- ユーザー管理タブ -->
+        <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">ユーザー一覧</h2>
+                <div>
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="ユーザー検索..." id="userSearchInput">
+                    <button class="btn btn-outline-secondary" type="button" id="userSearchButton">
+                      <i class="fas fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>氏名</th>
+                      <th>メールアドレス</th>
+                      <th>権限</th>
+                      <th>プラン</th>
+                      <th>登録日</th>
+                      <th>ステータス</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTableBody">
+                    <!-- ユーザーデータがここに表示されます -->
+                  </tbody>
+                </table>
+              </div>
+              
+              <nav aria-label="ページネーション">
+                <ul class="pagination justify-content-center" id="userPagination">
+                  <!-- ページネーションがここに表示されます -->
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+        
+        <!-- サブスクリプションタブ -->
+        <div class="tab-pane fade" id="subscriptions" role="tabpanel" aria-labelledby="subscriptions-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h4 mb-0">サブスクリプション管理</h2>
+                <button class="btn btn-primary" id="createPlanButton">
+                  <i class="fas fa-plus me-2"></i>新規プラン作成
+                </button>
+              </div>
+              
+              <div class="row mb-4">
+                <div class="col-md-4 mb-3 mb-md-0">
+                  <div class="card h-100">
+                    <div class="card-header bg-light">
+                      <h5 class="mb-0">無料プラン</h5>
+                    </div>
+                    <div class="card-body">
+                      <h6 class="card-title text-center mb-3">¥0 / 月</h6>
+                      <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>1日5回までの利用</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>アセスメント生成</li>
+                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i>関連図の閲覧</li>
+                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i>看護計画の完全表示</li>
+                        <li class="mb-2"><i class="fas fa-times text-danger me-2"></i>履歴保存（最大3件）</li>
+                      </ul>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                      <button class="btn btn-outline-primary btn-sm" data-plan-id="free">編集</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-4 mb-3 mb-md-0">
+                  <div class="card h-100 border-primary">
+                    <div class="card-header bg-primary text-white">
+                      <h5 class="mb-0">プレミアムプラン</h5>
+                    </div>
+                    <div class="card-body">
+                      <h6 class="card-title text-center mb-3">¥980 / 月</h6>
+                      <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>1日20回までの利用</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>アセスメント生成</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>関連図の閲覧</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>看護計画の完全表示</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>履歴保存（最大50件）</li>
+                      </ul>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                      <button class="btn btn-outline-primary btn-sm" data-plan-id="premium">編集</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-4">
+                  <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                      <h5 class="mb-0">プロフェッショナルプラン</h5>
+                    </div>
+                    <div class="card-body">
+                      <h6 class="card-title text-center mb-3">¥2,980 / 月</h6>
+                      <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>無制限の利用</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>アセスメント生成</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>関連図の閲覧・カスタマイズ</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>看護計画の完全表示・編集</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>履歴保存（無制限）</li>
+                      </ul>
+                    </div>
+                    <div class="card-footer bg-white text-center">
+                      <button class="btn btn-outline-primary btn-sm" data-plan-id="professional">編集</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <h3 class="h5 mb-3">サブスクリプション履歴</h3>
+              <div class="table-responsive">
+                <table class="table table-hover">
+                  <thead>
+                    <tr>
+                      <th>ユーザー</th>
+                      <th>プラン</th>
+                      <th>開始日</th>
+                      <th>次回請求日</th>
+                      <th>金額</th>
+                      <th>ステータス</th>
+                      <th>操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="subscriptionTableBody">
+                    <!-- サブスクリプションデータがここに表示されます -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 利用統計タブ -->
+        <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="h4 mb-4">利用統計</h2>
+              
+              <div class="row mb-4">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h3 class="h5 mb-3">月間利用回数</h3>
+                      <div id="monthlyUsageChart" style="height: 300px;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h3 class="h5 mb-3">プラン別ユーザー分布</h3>
+                      <div id="planDistributionChart" style="height: 300px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h3 class="h5 mb-3">機能別利用状況</h3>
+                      <div id="featureUsageChart" style="height: 300px;"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                      <h3 class="h5 mb-3">月間収益推移</h3>
+                      <div id="revenueChart" style="height: 300px;"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- システム設定タブ -->
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h2 class="h4 mb-4">システム設定</h2>
+              
+              <form id="systemSettingsForm">
+                <div class="row mb-4">
+                  <div class="col-md-6">
+                    <h3 class="h5 mb-3">API設定</h3>
+                    <div class="mb-3">
+                      <label for="openaiApiKey" class="form-label">OpenAI API キー</label>
+                      <input type="password" class="form-control" id="openaiApiKey">
+                    </div>
+                    <div class="mb-3">
+                      <label for="stripeApiKey" class="form-label">Stripe API キー</label>
+                      <input type="password" class="form-control" id="stripeApiKey">
+                    </div>
+                    <div class="mb-3">
+                      <label for="stripeWebhookSecret" class="form-label">Stripe Webhook シークレット</label>
+                      <input type="password" class="form-control" id="stripeWebhookSecret">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <h3 class="h5 mb-3">利用制限設定</h3>
+                    <div class="mb-3">
+                      <label for="freePlanDailyLimit" class="form-label">無料プラン 1日の利用回数制限</label>
+                      <input type="number" class="form-control" id="freePlanDailyLimit" min="1" value="5">
+                    </div>
+                    <div class="mb-3">
+                      <label for="premiumPlanDailyLimit" class="form-label">プレミアムプラン 1日の利用回数制限</label>
+                      <input type="number" class="form-control" id="premiumPlanDailyLimit" min="1" value="20">
+                    </div>
+                    <div class="mb-3">
+                      <label for="freeHistoryLimit" class="form-label">無料プラン 履歴保存上限</label>
+                      <input type="number" class="form-control" id="freeHistoryLimit" min="1" value="3">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="row mb-4">
+                  <div class="col-md-6">
+                    <h3 class="h5 mb-3">メール設定</h3>
+                    <div class="mb-3">
+                      <label for="smtpServer" class="form-label">SMTPサーバー</label>
+                      <input type="text" class="form-control" id="smtpServer">
+                    </div>
+                    <div class="mb-3">
+                      <label for="smtpPort" class="form-label">SMTPポート</label>
+                      <input type="number" class="form-control" id="smtpPort">
+                    </div>
+                    <div class="mb-3">
+                      <label for="smtpUsername" class="form-label">SMTPユーザー名</label>
+                      <input type="text" class="form-control" id="smtpUsername">
+                    </div>
+                    <div class="mb-3">
+                      <label for="smtpPassword" class="form-label">SMTPパスワード</label>
+                      <input type="password" class="form-control" id="smtpPassword">
+                    </div>
+                  </div>
+                  
+                  <div class="col-md-6">
+                    <h3 class="h5 mb-3">バックアップ設定</h3>
+                    <div class="mb-3">
+                      <label for="backupFrequency" class="form-label">バックアップ頻度</label>
+                      <select class="form-select" id="backupFrequency">
+                        <option value="daily">毎日</option>
+                        <option value="weekly">毎週</option>
+                        <option value="monthly">毎月</option>
+                      </select>
+                    </div>
+                    <div class="mb-3">
+                      <label for="backupRetention" class="form-label">バックアップ保持期間（日）</label>
+                      <input type="number" class="form-control" id="backupRetention" min="1" value="30">
+                    </div>
+                    <div class="mb-3">
+                      <button type="button" class="btn btn-outline-primary" id="manualBackupButton">
+                        <i class="fas fa-download me-2"></i>手動バックアップ
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="text-center">
+                  <button type="submit" class="btn btn-primary px-4">
+                    <i class="fas fa-save me-2"></i>設定を保存
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>看護記録AI</h5>
+          <p class="text-muted">AIを活用した看護記録作成支援アプリケーション</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-decoration-none text-muted">ホーム</a></li>
+            <li><a href="patient-form.html" class="text-decoration-none text-muted">患者情報入力</a></li>
+            <li><a href="history.html" class="text-decoration-none text-muted">履歴</a></li>
+            <li><a href="subscription.html" class="text-decoration-none text-muted">プラン</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-envelope me-2"></i>info@nursing-ai.example.com</li>
+            <li><i class="fas fa-phone me-2"></i>03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0 text-muted">&copy; 2025 看護記録AI. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted">プライバシーポリシー</a></li>
+            <li class="list-inline-item"><a href="#" class="text-muted">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Custom JS -->
+  <script src="js/admin.js"></script>
+</body>
+</html>

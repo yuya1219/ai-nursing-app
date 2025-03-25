@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>患者情報入力 - 看護記録AIアプリケーション</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="看護記録AI" height="40" class="d-inline-block align-text-top">
+        <span class="ms-2">看護記録AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="patient-form.html">患者情報入力</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history.html">履歴</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="subscription.html">プラン</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <a href="login.html" class="btn btn-outline-primary me-2">ログイン</a>
+          <a href="register.html" class="btn btn-primary">新規登録</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="py-5">
+    <div class="container">
+      <h1 class="mb-4 text-center">患者情報入力</h1>
+      <p class="text-center text-muted mb-5">患者情報を入力して「確定」ボタンを押すと、アセスメント・関連図・看護計画が自動生成されます。</p>
+      
+      <form id="patientForm" class="needs-validation" novalidate>
+        <div class="row">
+          <!-- 左側カラム -->
+          <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-4 text-center">患者基本情報</h2>
+                
+                <!-- 患者アイコン -->
+                <div class="text-center mb-4">
+                  <div class="patient-icon-container mx-auto">
+                    <img id="patientIcon" src="img/default-patient.png" alt="患者アイコン">
+                    <label for="iconUpload" class="patient-icon-upload">
+                      <i class="fas fa-camera"></i>
+                      <input type="file" id="iconUpload" accept="image/*" style="display: none;">
+                    </label>
+                  </div>
+                </div>
+                
+                <!-- 基本情報フォーム -->
+                <div class="mb-3">
+                  <label for="patientName" class="form-label">氏名 <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="patientName" required>
+                  <div class="invalid-feedback">氏名を入力してください</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="form-label">性別 <span class="text-danger">*</span></label>
+                  <div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="gender" id="genderMale" value="男性" required>
+                      <label class="form-check-label" for="genderMale">男性</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="女性" required>
+                      <label class="form-check-label" for="genderFemale">女性</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="gender" id="genderOther" value="その他" required>
+                      <label class="form-check-label" for="genderOther">その他</label>
+                    </div>
+                    <div class="invalid-feedback">性別を選択してください</div>
+                  </div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="birthDate" class="form-label">生年月日 <span class="text-danger">*</span></label>
+                  <input type="date" class="form-control" id="birthDate" required>
+                  <div class="invalid-feedback">生年月日を入力してください</div>
+                  <div class="form-text mt-2" id="ageDisplay">年齢: --歳</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="familyStructure" class="form-label">家族構成</label>
+                  <select class="form-select" id="familyStructure">
+                    <option value="">選択してください</option>
+                    <option value="独居">独居</option>
+                    <option value="夫婦二人暮らし">夫婦二人暮らし</option>
+                    <option value="二世帯同居">二世帯同居</option>
+                    <option value="三世帯同居">三世帯同居</option>
+                    <option value="その他">その他</option>
+                  </select>
+                </div>
+                
+                <div class="mb-3" id="familyStructureOtherContainer" style="display: none;">
+                  <label for="familyStructureOther" class="form-label">家族構成（詳細）</label>
+                  <input type="text" class="form-control" id="familyStructureOther">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="keyPerson" class="form-label">キーパーソン</label>
+                  <input type="text" class="form-control" id="keyPerson">
+                </div>
+                
+                <div class="mb-3">
+                  <label for="careLevel" class="form-label">介護度</label>
+                  <select class="form-select" id="careLevel">
+                    <option value="">選択してください</option>
+                    <option value="自立">自立</option>
+                    <option value="要支援1">要支援1</option>
+                    <option value="要支援2">要支援2</option>
+                    <option value="要介護1">要介護1</option>
+                    <option value="要介護2">要介護2</option>
+                    <option value="要介護3">要介護3</option>
+                    <option value="要介護4">要介護4</option>
+                    <option value="要介護5">要介護5</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 中央カラム -->
+          <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-4 text-center">医療情報</h2>
+                
+                <div class="mb-3">
+                  <label for="currentDisease" class="form-label">現病名 <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="currentDisease" rows="3" required></textarea>
+                  <div class="invalid-feedback">現病名を入力してください</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="medicalHistory" class="form-label">既往歴</label>
+                  <textarea class="form-control" id="medicalHistory" rows="3"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="surgicalHistory" class="form-label">手術歴</label>
+                  <textarea class="form-control" id="surgicalHistory" rows="3"></textarea>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="medications" class="form-label">内服薬</label>
+                  <textarea class="form-control" id="medications" rows="3"></textarea>
+                </div>
+                
+                <h2 class="h5 mb-3 mt-4 text-center">生活情報</h2>
+                
+                <div class="mb-3">
+                  <label for="adlEating" class="form-label">食事の自立度</label>
+                  <select class="form-select" id="adlEating">
+                    <option value="">選択してください</option>
+                    <option value="自立">自立</option>
+                    <option value="見守り">見守り</option>
+                    <option value="一部介助">一部介助</option>
+                    <option value="全介助">全介助</option>
+                  </select>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="adlToileting" class="form-label">排泄の自立度</label>
+                  <select class="form-select" id="adlToileting">
+                    <option value="">選択してください</option>
+                    <option value="自立">自立</option>
+                    <option value="見守り">見守り</option>
+                    <option value="一部介助">一部介助</option>
+                    <option value="全介助">全介助</option>
+                  </select>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="adlMobility" class="form-label">移動の自立度</label>
+                  <select class="form-select" id="adlMobility">
+                    <option value="">選択してください</option>
+                    <option value="自立">自立</option>
+                    <option value="杖使用">杖使用</option>
+                    <option value="歩行器使用">歩行器使用</option>
+                    <option value="車椅子使用">車椅子使用</option>
+                    <option value="一部介助">一部介助</option>
+                    <option value="全介助">全介助</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 右側カラム -->
+          <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4">
+                <h2 class="h5 mb-4 text-center">その他情報</h2>
+                
+                <div class="mb-3">
+                  <label for="otherInfo" class="form-label">その他の情報（症状、生活習慣、心理状態など）</label>
+                  <textarea class="form-control" id="otherInfo" rows="15"></textarea>
+                </div>
+                
+                <!-- 広告エリア -->
+                <div class="ad-container text-center p-3 bg-light rounded mt-4">
+                  <p class="text-muted small mb-1">広告</p>
+                  <div id="ad-placeholder" style="height: 250px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                    <span class="text-muted">Google Ads広告が表示されます</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 確定ボタン -->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary btn-lg px-5" id="submitButton">
+            <span class="spinner-border spinner-border-sm d-none me-2" id="submitSpinner" role="status" aria-hidden="true"></span>
+            確定
+          </button>
+          <p class="text-muted mt-2 small">※ 入力内容を確認の上、確定ボタンを押してください</p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>看護記録AI</h5>
+          <p class="text-muted">AIを活用した看護記録作成支援アプリケーション</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-decoration-none text-muted">ホーム</a></li>
+            <li><a href="patient-form.html" class="text-decoration-none text-muted">患者情報入力</a></li>
+            <li><a href="history.html" class="text-decoration-none text-muted">履歴</a></li>
+            <li><a href="subscription.html" class="text-decoration-none text-muted">プラン</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-envelope me-2"></i>info@nursing-ai.example.com</li>
+            <li><i class="fas fa-phone me-2"></i>03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0 text-muted">&copy; 2025 看護記録AI. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted">プライバシーポリシー</a></li>
+            <li class="list-inline-item"><a href="#" class="text-muted">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="js/patient-form.js"></script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+/* 看護記録AIアプリケーション カスタムCSS */
+
+/* 全体のスタイル */
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #333;
+}
+
+/* ヘッダー */
+.navbar {
+  padding: 0.75rem 0;
+}
+
+.navbar-brand {
+  font-weight: 700;
+}
+
+/* メインビジュアル */
+.hero {
+  padding: 5rem 0;
+  background-color: #f8f9fa;
+}
+
+/* 機能アイコン */
+.feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  font-size: 1.5rem;
+}
+
+/* カード */
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* 料金プラン */
+.pricing-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5rem 1rem;
+  background-color: #dc3545;
+  color: white;
+  font-size: 0.8rem;
+  border-radius: 0 0.25rem 0 0.25rem;
+}
+
+/* 広告エリア */
+.ad-container {
+  max-width: 728px;
+  margin: 0 auto;
+}
+
+/* フォーム要素 */
+.form-control:focus, .form-select:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+/* 患者情報フォーム */
+.patient-icon-container {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 1rem;
+  position: relative;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #dee2e6;
+}
+
+.patient-icon-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.patient-icon-upload {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #007bff;
+  color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+/* タブコンテンツ */
+.tab-content {
+  padding: 1.5rem;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-top: none;
+  border-radius: 0 0 0.25rem 0.25rem;
+}
+
+/* 結果表示エリア */
+.assessment-result, .nursing-plan-result {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+  min-height: 300px;
+}
+
+.relationship-diagram {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid #dee2e6;
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ログイン・登録フォーム */
+.auth-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* マイページ */
+.sidebar {
+  background-color: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 0.25rem;
+  height: 100%;
+}
+
+.history-item {
+  padding: 1rem;
+  border-bottom: 1px solid #dee2e6;
+  transition: background-color 0.2s ease;
+}
+
+.history-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  .hero {
+    padding: 3rem 0;
+  }
+  
+  .patient-icon-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .sidebar {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+/* プレミアム機能のロック表示 */
+.premium-lock {
+  position: relative;
+}
+
+.premium-lock::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  border-radius: 0.25rem;
+}
+
+.premium-lock::after {
+  content: "プレミアム会員限定機能です";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  z-index: 2;
+  width: 80%;
+  text-align: center;
+}
+
+/* ローディング表示 */
+.loading-spinner {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  border: 0.25rem solid rgba(0, 123, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #007bff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  color: #6c757d;
+}
