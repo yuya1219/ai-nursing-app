@@ -18,6 +18,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const urlParams = new URLSearchParams(window.location.search);
   const redirectUrl = urlParams.get('redirect') || 'index.html';
   
+  // タブパラメータの取得
+  const tab = urlParams.get("tab");
+
+  // 新規登録タブをアクティブにする
+  if (tab === "register") {
+    document.getElementById("register-tab").click();
+  }
+
   // ログインフォームの送信処理
   if (loginForm) {
     loginForm.addEventListener('submit', function(event) {
