@@ -40,6 +40,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
+  // 患者アイコン選択モーダル
+  const modal = document.getElementById("iconSelectModal");
+  const openModal = document.getElementById("openIconModal");
+  const closeModal = document.getElementById("closeModal");
+  const iconOptions = document.querySelectorAll(".icon-option");
+
+  openModal.addEventListener("click", function () {
+    modal.style.display = "block";
+    });
+
+  closeModal.addEventListener("click", function () {
+    modal.style.display = "none";
+    });
+
+    iconOptions.forEach(icon => {
+    icon.addEventListener("click", function () {
+      patientIcon.src = this.getAttribute("data-src");
+      modal.style.display = "none";
+    });
+    });
+
+  window.addEventListener("click", function (event) {
+      if (event.target === modal) {
+    modal.style.display = "none";
+      }
+    });
+
   // 生年月日から年齢を自動計算
   birthDateInput.addEventListener('change', calculateAge);
 

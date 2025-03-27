@@ -70,8 +70,40 @@
                       <input type="file" id="iconUpload" accept="image/*" style="display: none;">
                     </label>
                   </div>
+                </div> -->
+                <!-- アイコン選択モーダル -->
+                <div id="iconSelectModal" class="modal">
+                  <div class="modal-content">
+                    <span class="close" id="closeModal">&times;</span>
+                    <h2>アイコンを選択</h2>
+                    <div class="icon-grid">
+                      <img src="img/icon1.png" class="icon-option" data-src="img/icon1.png">
+                      <img src="img/icon2.png" class="icon-option" data-src="img/icon2.png">
+                      <img src="img/icon3.png" class="icon-option" data-src="img/icon3.png">
+                      <img src="img/icon4.png" class="icon-option" data-src="img/icon4.png">
+                      <img src="img/icon5.png" class="icon-option" data-src="img/icon5.png">
+                      <img src="img/icon6.png" class="icon-option" data-src="img/icon6.png">
+                      <img src="img/icon7.png" class="icon-option" data-src="img/icon7.png">
+                      <img src="img/icon8.png" class="icon-option" data-src="img/icon8.png">
+                      <label for="iconUpload" class="icon-upload-button">
+                        <img src="img/other.png" class="icon-option" data-src="img/other.png">
+                        <input type="file" id="iconUpload" accept="image/*" style="display: none;">
+                      </label>
+                    </div>
+                  </div>
                 </div>
                 
+                <!-- 患者アイコン -->
+                <div class="text-center mb-4">
+                  <div class="patient-icon-container mx-auto">
+                    <img id="patientIcon" src="img/default-patient.png" alt="患者アイコン">
+                    <label for="iconUploads" class="patient-icon-upload" id="openIconModal">
+                      <i class="fas fa-camera"></i>
+                      <!-- <input type="file" id="iconUpload" accept="image/*" style="display: none;"> -->
+                    </label>
+                  </div>
+                </div>
+
                 <!-- 基本情報フォーム -->
                 <div class="mb-3">
                   <label for="patientName" class="form-label">氏名 <span class="text-danger">*</span></label>
