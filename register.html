@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新規登録 - 看護記録AIアプリケーション</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- ヘッダー -->
+  <header class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <img src="img/logo.png" alt="看護記録AI" height="40" class="d-inline-block align-text-top">
+        <span class="ms-2">看護記録AI</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">ホーム</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="patient-form.html">患者情報入力</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="history.html">履歴</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="subscription.html">プラン</a>
+          </li>
+        </ul>
+        <div class="d-flex">
+          <a href="login.html" class="btn btn-outline-primary me-2">ログイン</a>
+          <a href="register.html" class="btn btn-primary">新規登録</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- メインコンテンツ -->
+  <main class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+              <h1 class="h3 mb-4 text-center">新規アカウント登録</h1>
+              
+              <!-- 選択されたプラン情報（URLパラメータから取得） -->
+              <div class="alert alert-info mb-4 d-none" id="selectedPlanInfo">
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-info-circle me-3 fs-4"></i>
+                  <div>
+                    <p class="mb-0"><strong>選択プラン: <span id="planName">プレミアムプラン</span></strong></p>
+                    <p class="mb-0 small">登録完了後、支払い情報の入力に進みます</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 登録フォーム -->
+              <form id="registerForm" class="needs-validation" novalidate>
+                <div class="mb-3">
+                  <label for="registerName" class="form-label">氏名</label>
+                  <input type="text" class="form-control" id="registerName" required>
+                  <div class="invalid-feedback">氏名を入力してください</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="registerEmail" class="form-label">メールアドレス</label>
+                  <input type="email" class="form-control" id="registerEmail" required>
+                  <div class="invalid-feedback">有効なメールアドレスを入力してください</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="registerPassword" class="form-label">パスワード</label>
+                  <div class="input-group">
+                    <input type="password" class="form-control" id="registerPassword" required minlength="8">
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                  <div class="form-text">8文字以上で、英字・数字・記号を含めてください</div>
+                  <div class="invalid-feedback">8文字以上のパスワードを入力してください</div>
+                </div>
+                
+                <div class="mb-3">
+                  <label for="confirmPassword" class="form-label">パスワード（確認）</label>
+                  <input type="password" class="form-control" id="confirmPassword" required>
+                  <div class="invalid-feedback">パスワードが一致しません</div>
+                </div>
+                
+                <div class="mb-4">
+                  <label class="form-label">職種</label>
+                  <select class="form-select" id="occupation" required>
+                    <option value="" selected disabled>選択してください</option>
+                    <option value="nurse">看護師</option>
+                    <option value="student">看護学生</option>
+                    <option value="teacher">看護教員</option>
+                    <option value="other">その他</option>
+                  </select>
+                  <div class="invalid-feedback">職種を選択してください</div>
+                </div>
+                
+                <div class="mb-4 form-check">
+                  <input type="checkbox" class="form-check-input" id="agreeTerms" required>
+                  <label class="form-check-label" for="agreeTerms">
+                    <a href="#" class="text-decoration-none" id="termsLink">利用規約</a>と<a href="#" class="text-decoration-none" id="privacyLink">プライバシーポリシー</a>に同意します
+                  </label>
+                  <div class="invalid-feedback">利用規約とプライバシーポリシーに同意する必要があります</div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary">
+                    <span class="spinner-border spinner-border-sm d-none me-2" id="registerSpinner" role="status" aria-hidden="true"></span>
+                    アカウント登録
+                  </button>
+                  <button type="button" class="btn btn-outline-secondary" id="googleRegisterBtn">
+                    <i class="fab fa-google me-2"></i>Googleで登録
+                  </button>
+                </div>
+              </form>
+              
+              <div class="text-center mt-4">
+                <p class="mb-0">既にアカウントをお持ちですか？ <a href="login.html" class="text-decoration-none">ログイン</a></p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 広告エリア -->
+          <div class="ad-container text-center p-3 bg-light rounded mt-4">
+            <p class="text-muted small mb-1">広告</p>
+            <div id="ad-placeholder" style="height: 90px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+              <span class="text-muted">Google Ads広告が表示されます</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- フッター -->
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>看護記録AI</h5>
+          <p class="text-muted">AIを活用した看護記録作成支援アプリケーション</p>
+        </div>
+        <div class="col-md-4 mb-4 mb-md-0">
+          <h5>リンク</h5>
+          <ul class="list-unstyled">
+            <li><a href="index.html" class="text-decoration-none text-muted">ホーム</a></li>
+            <li><a href="patient-form.html" class="text-decoration-none text-muted">患者情報入力</a></li>
+            <li><a href="history.html" class="text-decoration-none text-muted">履歴</a></li>
+            <li><a href="subscription.html" class="text-decoration-none text-muted">プラン</a></li>
+          </ul>
+        </div>
+        <div class="col-md-4">
+          <h5>お問い合わせ</h5>
+          <ul class="list-unstyled text-muted">
+            <li><i class="fas fa-envelope me-2"></i>info@nursing-ai.example.com</li>
+            <li><i class="fas fa-phone me-2"></i>03-1234-5678</li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p class="mb-0 text-muted">&copy; 2025 看護記録AI. All rights reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <ul class="list-inline mb-0">
+            <li class="list-inline-item"><a href="#" class="text-muted">プライバシーポリシー</a></li>
+            <li class="list-inline-item"><a href="#" class="text-muted">利用規約</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // URLパラメータからプラン情報を取得
+      const urlParams = new URLSearchParams(window.location.search);
+      const planParam = urlParams.get('plan');
+      
+      if (planParam) {
+        const planInfoElement = document.getElementById('selectedPlanInfo');
+        const planNameElement = document.getElementById('planName');
+        
+        if (planParam === 'premium') {
+          planNameElement.textContent = 'プレミアムプラン';
+          planInfoElement.classList.remove('d-none');
+        } else if (planParam === 'professional') {
+          planNameElement.textContent = 'プロフェッショナルプラン';
+          planInfoElement.classList.remove('d-none');
+        }
+      }
+      
+      // パスワード表示切替
+      const togglePassword = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('registerPassword');
+      
+      togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.querySelector('i').classList.toggle('fa-eye');
+        this.querySelector('i').classList.toggle('fa-eye-slash');
+      });
+      
+      // フォームバリデーション
+      const form = document.getElementById('registerForm');
+      const password = document.getElementById('registerPassword');
+      const confirmPassword = document.getElementById('confirmPassword');
+      
+      form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        
+        // パスワード一致チェック
+        if (password.value !== confirmPassword.value) {
+          confirmPassword.setCustomValidity('パスワードが一致しません');
+        } else {
+          confirmPassword.setCustomValidity('');
+        }
+        
+        form.classList.add('was-validated');
+        
+        // 実際の送信処理（デモ用）
+        if (form.checkValidity()) {
+          event.preventDefault();
+          
+          // ローディングスピナー表示
+          const spinner = document.getElementById('registerSpinner');
+          const submitButton = form.querySelector('button[type="submit"]');
+          
+          spinner.classList.remove('d-none');
+          submitButton.disabled = true;
+          
+          // 送信処理をシミュレート（実際はAPIリクエストなど）
+          setTimeout(function() {
+            // 登録成功後の処理
+            window.location.href = 'index.html';
+          }, 2000);
+        }
+      });
+      
+      // Googleログインボタン
+      document.getElementById('googleRegisterBtn').addEventListener('click', function() {
+        // Google認証処理（実装は省略）
+        alert('Google認証は実装されていません（デモ用）');
+      });
+    });
+  </script>
+</body>
+</html>
