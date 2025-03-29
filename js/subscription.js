@@ -557,16 +557,19 @@ function showPaymentModal(planId) {
             localStorage.setItem('userInfo', JSON.stringify(userInfo));
             
             // 成功メッセージを表示
-alert(`${plan.name}への登録が完了しました。`);
+            alert(`${plan.name}への登録が完了しました。`);
 
-// ユーザー情報を更新
-updateUserSubscriptionStatus(plan.id);
+            // ユーザー情報を更新
+            updateUserSubscriptionStatus(plan.id);
 
-// マイページに遷移する前に少し待機
-setTimeout(() => {
-  // 購入完了ページに遷移
-  window.location.href = 'subscription-success.html?plan=' + encodeURIComponent(plan.id);
-}, 1500);
+            // マイページに遷移する前に少し待機
+            setTimeout(() => {
+              // 購入完了ページに遷移
+              window.location.href = 'subscription-success.html?plan=' + encodeURIComponent(plan.id);
+            }, 1500);
+            */
+    })
+  };
 
 /**
  * ユーザーのサブスクリプション状態を更新する

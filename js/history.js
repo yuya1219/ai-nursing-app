@@ -585,3 +585,4 @@ fetch(gasUrl, {
   document.getElementById('loadingSpinner').style.display = 'none';
 });
 */
+}
