@@ -150,8 +150,10 @@ function login(email, password, rememberMe) {
       }
     };
     
-    // ユーザー情報をローカルストレージに保存
-    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    if (rememberMe) {
+      // ユーザー情報をローカルストレージに保存
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    }
     
     // リダイレクト先のURLを取得
     const urlParams = new URLSearchParams(window.location.search);
