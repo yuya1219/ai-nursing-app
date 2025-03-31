@@ -772,4 +772,4 @@ function setupEventListeners() {
       sortCurrentContent(column, newOrder);
     });
   });
-}
+};
