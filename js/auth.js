@@ -2,6 +2,8 @@
  * AI看護記録アプリケーション - 認証スクリプト
  */
 
+import { showTermsModal, showPrivacyModal } from './modalUtils.js';
+
 // DOMが完全に読み込まれた後に実行
 document.addEventListener('DOMContentLoaded', function() {
   // フォーム要素の取得
@@ -12,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const googleLoginBtn = document.getElementById('googleLoginBtn');
   const googleRegisterBtn = document.getElementById('googleRegisterBtn');
   const forgotPasswordLink = document.getElementById('forgotPasswordLink');
-  const termsLink = document.getElementById('termsLink');
   
   // URLパラメータの取得（リダイレクト先など）
   const urlParams = new URLSearchParams(window.location.search);
@@ -142,6 +143,14 @@ document.addEventListener('DOMContentLoaded', function() {
     termsLink.addEventListener('click', function(event) {
       event.preventDefault();
       showTermsModal();
+    });
+  }
+
+  // プライバシーポリシーリンクのイベント処理
+  if (privacyLink) {
+    privacyLink.addEventListener('click', function (event) {
+      event.preventDefault();
+      showPrivacyModal();
     });
   }
   
@@ -510,61 +519,4 @@ function sendPasswordResetLink(email) {
     alert('通信エラーが発生しました。再度お試しください。');
   });
   */
-}
-
-/**
- * 利用規約モーダルを表示する関数
- */
-function showTermsModal() {
-  // モーダルのHTMLを作成
-  const modalHtml = `
-    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="termsModalLabel">利用規約</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <h6>1. サービスの利用について</h6>
-            <p>本サービスは、看護記録の作成を支援するためのツールです。医療・看護の専門知識を持つ方が使用することを前提としています。</p>
-            
-            <h6>2. 責任の制限</h6>
-            <p>本サービスは情報提供を目的としており、実際の医療行為や看護判断の代替となるものではありません。生成された内容の正確性や適切性については、利用者ご自身の責任において判断してください。</p>
-            
-            <h6>3. 個人情報の取り扱い</h6>
-            <p>本サービスに入力された患者情報は、アセスメントや看護計画の生成のためにのみ使用され、当社のサーバーに保存されます。個人を特定できる情報の入力は避けてください。</p>
-            
-            <h6>4. 知的財産権</h6>
-            <p>本サービスに関するすべての知的財産権は当社に帰属します。生成されたコンテンツの著作権は利用者に帰属しますが、サービス改善のために匿名化されたデータを使用することがあります。</p>
-            
-            <h6>5. 禁止事項</h6>
-            <p>本サービスの不正利用、リバースエンジニアリング、第三者へのアカウント共有などの行為は禁止されています。</p>
-            
-            <h6>6. サービスの変更・中断</h6>
-            <p>当社は、予告なくサービスの内容を変更したり、サービスの提供を中断・終了したりすることがあります。</p>
-            
-            <h6>7. 利用規約の変更</h6>
-            <p>当社は、必要に応じて本規約を変更することがあります。変更後の規約は、本サービス上に表示した時点から効力を生じるものとします。</p>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">閉じる</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-  
-  // モーダルをDOMに追加
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
-  
-  // モーダルを表示
-  const modal = new bootstrap.Modal(document.getElementById('termsModal'));
-  modal.show();
-  
-  // モーダルが閉じられたときの処理
-  document.getElementById('termsModal').addEventListener('hidden.bs.modal', function() {
-    // モーダルをDOMから削除
-    this.remove();
-  });
 }

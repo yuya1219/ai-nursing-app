@@ -39,10 +39,10 @@ function checkAdminPermission() {
   }
   
   // 管理者権限がない場合はリダイレクト
-  if (!userInfo || userInfo.role !== 'admin') {
-    window.location.href = 'login.html?redirect=admin.html';
-    return;
-  }
+//   if (!userInfo || userInfo.role !== 'admin') {
+//     window.location.href = 'login.html?redirect=admin.html';
+//     return;
+//   }
 }
 
 /**

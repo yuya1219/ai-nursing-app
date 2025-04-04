@@ -2,6 +2,8 @@
  * AI看護記録アプリケーション - 新規登録スクリプト
  */
 
+import { showTermsModal, showPrivacyModal } from './modalUtils.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     // ログイン状態に応じたUIの更新
     updateUIBasedOnLoginState();
@@ -78,6 +80,23 @@ document.addEventListener('DOMContentLoaded', function() {
         // Google認証処理（実装は省略）
         alert('Google認証は実装されていません（デモ用）');
         });
+    
+    // 利用規約リンクのイベント処理
+    if (termsLink) {
+        termsLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            showTermsModal();
+        });
+    }
+
+    // プライバシーポリシーリンクのイベント処理
+    if (privacyLink) {
+        privacyLink.addEventListener('click', function (event) {
+            event.preventDefault();
+            showPrivacyModal();
+        });
+    }
+
     });
 
 /**
