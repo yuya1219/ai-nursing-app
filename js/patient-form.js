@@ -14,9 +14,33 @@ document.addEventListener('DOMContentLoaded', function() {
   const patientIcon = document.getElementById('patientIcon');
   const submitButton = document.getElementById('submitButton');
   const submitSpinner = document.getElementById('submitSpinner');
+  const headerContainer = document.querySelector("#header");
 
-  // ログイン状態に応じたUIの更新
-  updateUIBasedOnLoginState();
+  if (headerContainer) {
+    // `header.html` を読み込んで `#header` に挿入
+    fetch("header.html")
+      .then(response => response.ok ? response.text() : Promise.reject(`HTTP error! Status: ${response.status}`))
+      .then(data => {
+        headerContainer.innerHTML = data;
+        updateUIBasedOnLoginState(); // ← ヘッダーが読み込まれてから実行
+      })
+      .catch(error => console.error("ヘッダーの読み込みに失敗しました:", error));
+  }
+
+  // `footer.html` を読み込んで `#footer` に挿入
+  const footerContainer = document.querySelector("#footer");
+
+  fetch("footer.html")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+      document.querySelector("#footer").innerHTML = data;
+    })
+    .catch(error => console.error("フッターの読み込みに失敗しました:", error));
 
   // 患者アイコンのアップロード処理
   iconUpload.addEventListener('change', function(event) {
@@ -262,4 +286,16 @@ function updateUIBasedOnLoginState() {
     `;
   }
 }
+
+/**
+ * ログアウト処理を行う関数
+ */
+function logout() {
+  // ローカルストレージからユーザー情報を削除
+  localStorage.removeItem('userInfo');
+
+  // ページをリロードしてUIを更新
+  window.location.reload();
+}
+
 

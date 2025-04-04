@@ -4,8 +4,34 @@
 
 // DOMが完全に読み込まれた後に実行
 document.addEventListener('DOMContentLoaded', function() {
-  // ログイン状態に応じたUIの更新
-  updateUIBasedOnLoginState();
+
+  const headerContainer = document.querySelector("#index_header");
+
+  if (headerContainer) {
+    // `index_header.html` を読み込んで `#index_header` に挿入
+    fetch("index_header.html")
+      .then(response => response.ok ? response.text() : Promise.reject(`HTTP error! Status: ${response.status}`))
+      .then(data => {
+        headerContainer.innerHTML = data;
+        updateUIBasedOnLoginState(); // ← ヘッダーが読み込まれてから実行
+      })
+      .catch(error => console.error("ヘッダーの読み込みに失敗しました:", error));
+  }
+  
+  // `footer.html` を読み込んで `#footer` に挿入
+  const footerContainer = document.querySelector("#footer");
+
+  fetch("footer.html")
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(data => {
+      document.querySelector("#footer").innerHTML = data;
+    })
+    .catch(error => console.error("フッターの読み込みに失敗しました:", error));
 });
 
 /**
@@ -17,6 +43,11 @@ function updateUIBasedOnLoginState() {
   
   // ヘッダーのボタン表示エリアを取得
   const headerButtonsContainer = document.querySelector('header .d-flex');
+
+  if (!headerButtonsContainer) {
+    console.warn("ヘッダーのボタンエリアが見つかりません。");
+    return;
+  }
   
   // ユーザー情報が存在する場合（ログイン済み）
   if (userInfo && userInfo.name) {
