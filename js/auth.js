@@ -51,6 +51,17 @@ document.addEventListener('DOMContentLoaded', function() {
       login(email, password, rememberMe);
     });
   }
+
+  // パスワード表示切替
+  const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('registerPassword');
+
+  togglePassword.addEventListener('click', function () {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    this.querySelector('i').classList.toggle('fa-eye');
+    this.querySelector('i').classList.toggle('fa-eye-slash');
+  });
   
   // 新規登録フォームの送信処理
   if (registerForm) {
@@ -58,8 +69,25 @@ document.addEventListener('DOMContentLoaded', function() {
       event.preventDefault();
       
       // パスワード一致確認
-      const password = document.getElementById('registerPassword').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
+      const passwordInput = document.getElementById('registerPassword');
+      const confirmPasswordInput = document.getElementById('confirmPassword');
+      const formText = passwordInput.closest('.mb-3').querySelector('.form-text'); // 説明テキスト
+      const invalidFeedback = passwordInput.closest('.mb-3').querySelector('.invalid-feedback'); // エラーメッセージ
+
+      // パスワードのバリデーションルール（8文字以上、英字、数字、記号を含む）
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?/~\-]).{8,}$/;
+      const password = passwordInput.value;
+      const confirmPassword = confirmPasswordInput.value;
+
+      if (passwordPattern.test(password)) {
+        formText.style.display = 'block'; // 条件を満たしたら表示
+        passwordInput.classList.remove('is-invalid');
+        invalidFeedback.style.display = 'none';
+      } else {
+        formText.style.display = 'none'; // 条件を満たしていない場合は非表示
+        passwordInput.classList.add('is-invalid'); // 赤字エラー表示
+        invalidFeedback.style.display = 'block'; // エラーメッセージを表示
+      }
       
       if (password !== confirmPassword) {
         document.getElementById('confirmPassword').setCustomValidity('パスワードが一致しません');

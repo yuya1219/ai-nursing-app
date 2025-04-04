@@ -129,14 +129,32 @@
                     
                     <div class="mb-3">
                       <label for="registerPassword" class="form-label">パスワード</label>
-                      <input type="password" class="form-control" id="registerPassword" required minlength="8">
-                      <div class="invalid-feedback">8文字以上のパスワードを入力してください</div>
+                      <div class="input-group">
+                        <input type="password" class="form-control" id="registerPassword" required minlength="8">
+                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                          <i class="fas fa-eye"></i>
+                        </button>
+                      </div>
+                      <div class="form-text">8文字以上で、英字・数字・記号を含めてください</div>
+                      <div class="invalid-feedback">8文字以上で、英字・数字・記号を含めてください</div>
                     </div>
                     
                     <div class="mb-3">
                       <label for="confirmPassword" class="form-label">パスワード（確認）</label>
                       <input type="password" class="form-control" id="confirmPassword" required>
                       <div class="invalid-feedback">パスワードが一致しません</div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label">職種</label>
+                      <select class="form-select" id="occupation" required>
+                        <option value="" selected disabled>選択してください</option>
+                        <option value="nurse">看護師</option>
+                        <option value="student">看護学生</option>
+                        <option value="teacher">看護教員</option>
+                        <option value="other">その他</option>
+                      </select>
+                      <div class="invalid-feedback">職種を選択してください</div>
                     </div>
                     
                     <div class="mb-3 form-check">

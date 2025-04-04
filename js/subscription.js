@@ -69,9 +69,9 @@ function checkLoginStatus() {
   
   if (userInfo && userInfo.userId) {
     // ログイン済みの場合
-    document.getElementById('authButtons').classList.add('d-none');
-    document.getElementById('userMenu').classList.remove('d-none');
-    document.getElementById('userName').textContent = userInfo.name || 'ユーザー';
+    // document.getElementById('authButtons').classList.add('d-none');
+    // document.getElementById('userMenu').classList.remove('d-none');
+    // document.getElementById('userName').textContent = userInfo.name || 'ユーザー';
     
     // 現在のプラン情報を表示
     document.getElementById('currentPlanCard').classList.remove('d-none');
@@ -83,8 +83,8 @@ function checkLoginStatus() {
     updatePlanButtons(userInfo.subscriptionLevel);
   } else {
     // 未ログインの場合
-    document.getElementById('authButtons').classList.remove('d-none');
-    document.getElementById('userMenu').classList.add('d-none');
+    // document.getElementById('authButtons').classList.remove('d-none');
+    // document.getElementById('userMenu').classList.add('d-none');
     document.getElementById('currentPlanCard').classList.add('d-none');
     
     // 無料プランボタンを「ログインして始める」に変更
@@ -96,18 +96,18 @@ function checkLoginStatus() {
       });
     }
     
-    // 有料プランボタンをログインリダイレクトに設定
+    // 有料プランボタンを登録画面に設定
     const premiumPlanBtn = document.getElementById('premiumPlanBtn');
     if (premiumPlanBtn) {
       premiumPlanBtn.addEventListener('click', function() {
-        window.location.href = 'login.html?redirect=subscription.html';
+        window.location.href = 'register.html?plan=premium';
       });
     }
     
     const professionalPlanBtn = document.getElementById('professionalPlanBtn');
     if (professionalPlanBtn) {
       professionalPlanBtn.addEventListener('click', function() {
-        window.location.href = 'login.html?redirect=subscription.html';
+        window.location.href = 'register.html?plan=professional';
       });
     }
   }
