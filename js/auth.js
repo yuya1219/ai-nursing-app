@@ -81,13 +81,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const confirmPassword = confirmPasswordInput.value;
 
       if (passwordPattern.test(password)) {
-        formText.style.display = 'block'; // 条件を満たしたら表示
-        passwordInput.classList.remove('is-invalid');
-        invalidFeedback.style.display = 'none';
+        document.getElementById('registerPassword').setCustomValidity(''); // 条件を満たしていたら何も表示しない
       } else {
-        formText.style.display = 'none'; // 条件を満たしていない場合は非表示
-        passwordInput.classList.add('is-invalid'); // 赤字エラー表示
-        invalidFeedback.style.display = 'block'; // エラーメッセージを表示
+        document.getElementById('registerPassword').setCustomValidity('条件を満たしていません'); // 条件を満たしていない場合はエラーメッセージを表示
       }
       
       if (password !== confirmPassword) {
@@ -170,43 +166,28 @@ function login(email, password, rememberMe) {
   const gasUrl = 'https://script.google.com/macros/s/AKfycbwmfpRmRYc5tlBTy0PydIpblV04SGLxlBEJiygr7PgwRmYcJQXi3l3WyAiZukzb9YXd7w/exec';
   
   // 開発用のモック処理（実際のデプロイ時には削除）
-  console.log('ログイン処理:', { email, password: '********', rememberMe });
+  console.log('ログイン処理:', { email, password, rememberMe });
   
   // 開発用のモック処理：2秒後にログイン成功とする
   setTimeout(function() {
     // ログイン成功時の処理
-    const userInfo = {
-      userId: 'user123',
-      name: 'テストユーザー',
-      email: email,
-      role: 'user', // 'user', 'admin'
-      subscriptionLevel: 'free', // 'free', 'premium', 'professional'
-      usageLimit: {
-        dailyLimit: 5,
-        remainingToday: 5
-      }
-    };
     
-    if (rememberMe) {
-      // ユーザー情報をローカルストレージに保存
-      localStorage.setItem('userInfo', JSON.stringify(userInfo));
-    }
     
     // リダイレクト先のURLを取得
     const urlParams = new URLSearchParams(window.location.search);
     const redirectUrl = urlParams.get('redirect') || 'index.html';
     
     // リダイレクト
-    window.location.href = redirectUrl;
+    // window.location.href = redirectUrl;
     
-    /* 実際のデプロイ時にはこの部分を実際のAPIリクエストに置き換え
+    // 実際のデプロイ時にはこの部分を実際のAPIリクエストに置き換え
     fetch(gasUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: JSON.stringify({
-        action: 'login',
+        action: 'loginUser',
         email: email,
         password: password,
         rememberMe: rememberMe
@@ -216,7 +197,8 @@ function login(email, password, rememberMe) {
     .then(data => {
       if (data.success) {
         // ログイン成功時の処理
-        localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+          // ユーザー情報をローカルストレージに保存
+          localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
         window.location.href = redirectUrl;
       } else {
         // ログイン失敗時の処理
@@ -229,7 +211,7 @@ function login(email, password, rememberMe) {
       showLoginError('通信エラーが発生しました。再度お試しください。');
       resetLoginForm();
     });
-    */
+    
   }, 2000);
 }
 
@@ -245,41 +227,30 @@ function register(name, email, password) {
   const gasUrl = 'https://script.google.com/macros/s/AKfycbwmfpRmRYc5tlBTy0PydIpblV04SGLxlBEJiygr7PgwRmYcJQXi3l3WyAiZukzb9YXd7w/exec';
   
   // 開発用のモック処理（実際のデプロイ時には削除）
-  console.log('登録処理:', { name, email, password: '********' });
+  console.log('登録処理:', { name, email, password});
   
   // 開発用のモック処理：2秒後に登録成功とする
   setTimeout(function() {
     // 登録成功時の処理
-    const userInfo = {
-      userId: 'user123',
-      name: name,
-      email: email,
-      role: 'user', // 'user', 'admin'
-      subscriptionLevel: 'free', // 'free', 'premium', 'professional'
-      usageLimit: {
-        dailyLimit: 5,
-        remainingToday: 5
-      }
-    };
     
     // ユーザー情報をローカルストレージに保存
-    localStorage.setItem('userInfo', JSON.stringify(userInfo));
+    // localStorage.setItem('userInfo', JSON.stringify(userInfo));
     
     // リダイレクト先のURLを取得
     const urlParams = new URLSearchParams(window.location.search);
     const redirectUrl = urlParams.get('redirect') || 'index.html';
     
     // リダイレクト
-    window.location.href = redirectUrl;
+    // window.location.href = redirectUrl;
     
-    /* 実際のデプロイ時にはこの部分を実際のAPIリクエストに置き換え
+    // 実際のデプロイ時にはこの部分を実際のAPIリクエストに置き換え
     fetch(gasUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: JSON.stringify({
-        action: 'register',
+        action: 'registerUser',
         name: name,
         email: email,
         password: password
@@ -302,7 +273,6 @@ function register(name, email, password) {
       showRegisterError('通信エラーが発生しました。再度お試しください。');
       resetRegisterForm();
     });
-    */
   }, 2000);
 }
 
@@ -399,10 +369,10 @@ function showRegisterError(errorMessage) {
   const form = document.getElementById('registerForm');
   form.parentNode.insertBefore(errorContainer, form.nextSibling);
   
-  // 3秒後にエラーメッセージを消す
+  // 5秒後にエラーメッセージを消す
   setTimeout(function() {
     errorContainer.remove();
-  }, 3000);
+  }, 5000);
 }
 
 /**
