@@ -4,6 +4,8 @@
 
 // DOMが完全に読み込まれた後に実行
 document.addEventListener('DOMContentLoaded', function() {
+  const userInfoJson = localStorage.getItem('userInfo');
+  const expiryTime = localStorage.getItem('userInfoExpiry');
 
   const headerContainer = document.querySelector("#index_header");
 
@@ -17,6 +19,16 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .catch(error => console.error("ヘッダーの読み込みに失敗しました:", error));
   }
+
+  // 前回ログインから12時間以上経っていたら、ローカルストレージ情報を削除（”ログイン状態を保持”チェック無の場合）
+  if (userInfoJson) {
+    if (expiryTime && new Date().getTime() > expiryTime) {
+      // 期限切れなので削除
+      localStorage.removeItem('userInfo');
+      localStorage.removeItem('userInfoExpiry');
+    }
+  }
+
   
   // `footer.html` を読み込んで `#footer` に挿入
   const footerContainer = document.querySelector("#footer");
