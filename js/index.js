@@ -9,6 +9,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const headerContainer = document.querySelector("#index_header");
 
+  // ユーザ情報作成
+  if (!userInfoJson) {
+    generateAnonUserId().then(tempUserId => {
+      localStorage.setItem('userInfo', JSON.stringify({
+        'userId': tempUserId,
+        'name': '',
+        'email': '',
+        'role': 'user',
+        'subscriptionPlan': 'free',
+        'usageLimit': {
+          dailyLimit: 3,
+          remainingToday: 3
+          },
+        'usageCount': {
+           "assessment": 0, "relationshipDiagram": 0, "nursingPlan": 0 
+          },
+        'lastResetDate': new Date().toISOString().slice(0, 10)
+      }));
+
+    })
+  };
+
+  // 日付変更時、実行回数制限リセット
+  resetDailyLimitIfNeeded();
+
   if (headerContainer) {
     // `index_header.html` を読み込んで `#index_header` に挿入
     fetch("index_header.html")
@@ -20,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(error => console.error("ヘッダーの読み込みに失敗しました:", error));
   }
 
-  // 前回ログインから12時間以上経っていたら、ローカルストレージ情報を削除（”ログイン状態を保持”チェック無の場合）
+  // 前回ログインから24時間以上経っていたら、ローカルストレージ情報を削除（”ログイン状態を保持”チェック無の場合）
   if (userInfoJson) {
     if (expiryTime && new Date().getTime() > expiryTime) {
       // 期限切れなので削除
@@ -102,4 +127,52 @@ function logout() {
   
   // ページをリロードしてUIを更新
   window.location.reload();
+}
+
+/**
+ * ユーザーID作成処理
+ */
+async function generateAnonUserId() {
+  const ip = await getClientIp();
+  const userAgent = getUserAgent();
+  const raw = ip + userAgent;
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(raw);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return hashHex;
+}
+
+// IPアドレス取得
+async function getClientIp() {
+  const res = await fetch("https://api.ipify.org?format=json");
+  const data = await res.json();
+  return data.ip;
+}
+
+// ブラウザ情報（User-Agent）取得
+function getUserAgent() {
+  return navigator.userAgent;
+}
+
+// 回数制限は午前0時にリセット（＝ dailyLimit に戻す）
+function resetDailyLimitIfNeeded() {
+  const userInfoStr = localStorage.getItem('userInfo');
+  if (!userInfoStr) return;
+
+  const userInfo = JSON.parse(userInfoStr);
+  const today = new Date().toISOString().slice(0, 10); // 例: '2025-04-12'
+
+  // 初回または日付が変わっていればリセット
+  if (userInfo.lastResetDate !== today) {
+    if (userInfo.usageLimit && typeof userInfo.usageLimit.dailyLimit === 'number') {
+      userInfo.usageLimit.remainingToday = userInfo.usageLimit.dailyLimit;
+      userInfo.lastResetDate = today;
+
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      console.log('usageLimit がリセットされました');
+    }
+  }
 }

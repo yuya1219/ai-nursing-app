@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const submitButton = document.getElementById('submitButton');
   const submitSpinner = document.getElementById('submitSpinner');
   const headerContainer = document.querySelector("#header");
+  // ローカルストレージからユーザー情報を取得
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
   if (headerContainer) {
     // `header.html` を読み込んで `#header` に挿入
@@ -161,7 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
       adlToileting: document.getElementById('adlToileting').value,
       adlMobility: document.getElementById('adlMobility').value,
       otherInfo: document.getElementById('otherInfo').value,
-      patientIcon: patientIcon.src
+      patientIcon: patientIcon.src,
+      userInfo: userInfo
     };
     
     // Google Apps Script APIにデータを送信
@@ -189,15 +192,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // 開発用のモック処理：3秒後に結果ページへリダイレクト
     setTimeout(function() {
       // 実際のデプロイ時にはこの部分を実際のAPIリクエストに置き換え
-      /*
+
       fetch(gasUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'text/plain'
         },
         body: JSON.stringify({
-          action: 'generateAssessment',
-          patientData: patientData
+          action: "generateAssessment",
+          patientData: patientData || {}
         })
       })
       .then(response => response.json())
@@ -205,7 +208,33 @@ document.addEventListener('DOMContentLoaded', function() {
         if (data.success) {
           // 成功時の処理
           localStorage.setItem('patientData', JSON.stringify(patientData));
-          localStorage.setItem('assessmentResult', JSON.stringify(data));
+          localStorage.setItem('assessmentResult', JSON.stringify({
+            success: data.success,
+            assessment: data.assessment,
+            error: data.error
+          }));
+
+          // usageCountをインクリメント（resultに基づいて）
+          const userInfoStr = localStorage.getItem('userInfo');
+          if (userInfoStr) {
+            const userInfo = JSON.parse(userInfoStr);
+            const usage = userInfo.usageCount || {};
+            const result = data.result || {};
+            ['assessment', 'relationshipDiagram', 'nursingPlan'].forEach(key => {
+              if (result[key] && typeof usage[key] === 'number') {
+                usage[key] += 1;
+              }
+            });
+            userInfo.usageCount = usage;
+          
+            // usageLimit.remainingTodayをデクリメント
+            if (typeof userInfo.usageLimit?.remainingToday === 'number') {
+              userInfo.usageLimit.remainingToday = Math.max(0, userInfo.usageLimit.remainingToday - 1);
+            }
+
+            // 保存
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
+          }
           window.location.href = 'result.html';
         } else {
           // エラー時の処理
@@ -220,28 +249,13 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = false;
         submitSpinner.classList.add('d-none');
       });
-      */
       
       // 開発用のモック処理：ローカルストレージにデータを保存して結果ページへ
-      localStorage.setItem('patientData', JSON.stringify(patientData));
       
       // モックのアセスメント結果
-      const mockAssessmentResult = {
-        success: true,
-        assessment: "これはモックのアセスメント結果です。実際のデプロイ時にはChatGPT APIからの応答が表示されます。",
-        mermaidCode: "graph TD\n  A[現病名] --> B[症状1]\n  A --> C[症状2]\n  B --> D[問題点1]\n  C --> E[問題点2]",
-        nursingPlan: {
-          longTermGoals: "長期目標のサンプルテキスト",
-          shortTermGoals: "短期目標のサンプルテキスト",
-          observationPlan: "観察計画のサンプルテキスト",
-          treatmentPlan: "実施計画のサンプルテキスト",
-          educationPlan: "教育計画のサンプルテキスト"
-        }
-      };
       
-      localStorage.setItem('assessmentResult', JSON.stringify(mockAssessmentResult));
-      window.location.href = 'result.html';
-    }, 3000);
+    }
+    , 3000);
   }
 });
 

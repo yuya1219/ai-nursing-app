@@ -197,8 +197,15 @@ function login(email, password, rememberMe) {
     .then(data => {
       if (data.success) {
         // ログイン成功時の処理
-          // ユーザー情報をローカルストレージに保存
-          localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+        // ユーザー情報をローカルストレージに保存
+        localStorage.setItem('userInfo', JSON.stringify(data.userInfo));
+        
+        if (!rememberMe) {
+          // 有効期限は24時間とする（ミリ秒で保存）
+          const expiryTime = new Date().getTime() + (24 * 60 * 60 * 1000); // 24時間
+          localStorage.setItem('userInfoExpiry', expiryTime);
+        }
+
         window.location.href = redirectUrl;
       } else {
         // ログイン失敗時の処理
@@ -223,6 +230,11 @@ function login(email, password, rememberMe) {
  * @param {string} password パスワード
  */
 function register(name, email, password) {
+
+  localStorage.setItem('userInfo')
+  const userInfoJson = localStorage.getItem('userInfo');
+  const userInfo = JSON.parse(userInfoJson);
+
   // 実際のデプロイ時にはGASのWebアプリURLを設定
   const gasUrl = 'https://script.google.com/macros/s/AKfycbwmfpRmRYc5tlBTy0PydIpblV04SGLxlBEJiygr7PgwRmYcJQXi3l3WyAiZukzb9YXd7w/exec';
   
@@ -251,6 +263,7 @@ function register(name, email, password) {
       },
       body: JSON.stringify({
         action: 'registerUser',
+        userId: userInfo.userId,
         name: name,
         email: email,
         password: password
