@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // 患者データとアセスメント結果の取得
   const patientData = JSON.parse(localStorage.getItem('patientData')) || {};
   const assessmentResult = JSON.parse(localStorage.getItem('assessmentResult')) || {};
-  
+  const nursingPlan = JSON.parse(localStorage.getItem('nursingPlan')) || {};
+
   // ユーザー情報の取得（ログイン状態の確認）
   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { subscriptionLevel: 'free' };
   
@@ -54,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
   displayPatientSummary(patientData);
   
   // 結果の表示
-  displayResults(assessmentResult, userInfo);
+  displayResults(assessmentResult, userInfo, nursingPlan);
   
   // ボタンイベントの設定
   setupButtonEvents(patientData, assessmentResult);
@@ -73,7 +74,7 @@ function displayPatientSummary(patientData) {
   // 基本情報
   document.getElementById('patientNameSummary').textContent = patientData.name || '--';
   document.getElementById('genderSummary').textContent = patientData.gender || '--';
-  document.getElementById('ageSummary').textContent = patientData.age || '--';
+  document.getElementById('ageSummary').textContent = String(patientData.age) || '--';
   document.getElementById('currentDiseaseSummary').textContent = patientData.currentDisease || '--';
   document.getElementById('careLevelSummary').textContent = patientData.careLevel || '--';
   document.getElementById('keyPersonSummary').textContent = patientData.keyPerson || '--';
@@ -82,7 +83,7 @@ function displayPatientSummary(patientData) {
 /**
  * アセスメント結果、関連図、看護計画を表示する関数
  */
-function displayResults(assessmentResult, userInfo) {
+function displayResults(assessmentResult, userInfo, nursingPlan) {
   // アセスメント結果の表示
   const assessmentContent = document.getElementById('assessmentContent');
   if (assessmentResult.success && assessmentResult.assessment) {
@@ -115,8 +116,8 @@ function displayResults(assessmentResult, userInfo) {
   
   // 看護計画の表示
   const nursingPlanContent = document.getElementById('nursingPlanContent');
-  if (assessmentResult.success && assessmentResult.nursingPlan) {
-    const plan = assessmentResult.nursingPlan;
+  if (nursingPlan.success && nursingPlan.nursingPlan) {
+    const plan = nursingPlan.nursingPlan;
     let planHtml = '';
     
     // 長期目標

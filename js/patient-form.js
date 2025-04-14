@@ -214,28 +214,58 @@ document.addEventListener('DOMContentLoaded', function() {
             error: data.error
           }));
 
-          // usageCountをインクリメント（resultに基づいて）
-          const userInfoStr = localStorage.getItem('userInfo');
-          if (userInfoStr) {
-            const userInfo = JSON.parse(userInfoStr);
-            const usage = userInfo.usageCount || {};
-            const result = data.result || {};
-            ['assessment', 'relationshipDiagram', 'nursingPlan'].forEach(key => {
-              if (result[key] && typeof usage[key] === 'number') {
-                usage[key] += 1;
-              }
-            });
-            userInfo.usageCount = usage;
-          
-            // usageLimit.remainingTodayをデクリメント
-            if (typeof userInfo.usageLimit?.remainingToday === 'number') {
-              userInfo.usageLimit.remainingToday = Math.max(0, userInfo.usageLimit.remainingToday - 1);
-            }
+          // usageCountを更新（resultに基づいて）
+          updateUsageInfo(data.result, true); //（初回なので true）
 
-            // 保存
-            localStorage.setItem('userInfo', JSON.stringify(userInfo));
-          }
-          window.location.href = 'result.html';
+          // 看護計画の作成
+          const assessmentResultStr = localStorage.getItem('assessmentResult').trim();
+          const patientDataStr = localStorage.getItem('patientData');
+
+          
+          if (assessmentResultStr && patientDataStr) {
+            const assessmentResult = JSON.parse(assessmentResultStr);
+            const assessment = assessmentResult.assessment || {};
+            const patientData = JSON.parse(patientDataStr);
+
+            fetch(gasUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'text/plain'
+              },
+              body: JSON.stringify({
+                action: "generateNursingPlan",
+                assessmentData: {
+                  assessment: assessment,
+                  patientData: patientData
+                }
+              })
+            })
+              .then(response => response.json())
+              .then(planData => {
+                if (planData.success) {
+
+                  // usageCountを更新（resultに基づいて）
+                  updateUsageInfo(planData.result); // usageLimit は更新しない（2回目）
+
+                  localStorage.setItem('nursingPlan', JSON.stringify({
+                    success: planData.success,
+                    nursingPlan: planData.nursingPlan,
+                    result: planData.result
+                  })); // 看護計画を保存
+                } else {
+                  console.warn('看護計画の生成に失敗:', planData.error);
+                  alert('看護計画の生成に失敗しました: ' + planData.error);
+                }
+
+                // 最後に結果画面へ遷移
+                window.location.href = 'result.html';
+              })
+            .catch(error => {
+              console.error('看護計画APIエラー:', error);
+              alert('看護計画の生成中に通信エラーが発生しました。');
+              window.location.href = 'result.html'; // 最低限の遷移は行う
+            });
+          };
         } else {
           // エラー時の処理
           alert('エラーが発生しました: ' + data.error);
@@ -249,10 +279,9 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = false;
         submitSpinner.classList.add('d-none');
       });
-      
-      // 開発用のモック処理：ローカルストレージにデータを保存して結果ページへ
-      
-      // モックのアセスメント結果
+
+      // 開発用のモック処理（実際のデプロイ時には削除）
+      console.log('患者データ送信完了！');
       
     }
     , 3000);
@@ -310,6 +339,33 @@ function logout() {
 
   // ページをリロードしてUIを更新
   window.location.reload();
+}
+
+/**
+ * usageCount を result に基づいて更新し、usageLimit.remainingToday を1デクリメントして保存
+ * @param {Object} result usageCountに反映する対象（例: data.result や planData.result）
+ * @param {boolean} decrementDailyLimit usageLimit.remainingTodayを減らすか（初回のみ true）
+ */
+function updateUsageInfo(result, decrementDailyLimit = false) {
+  const userInfoStr = localStorage.getItem('userInfo');
+  if (!userInfoStr) return;
+
+  const userInfo = JSON.parse(userInfoStr);
+  const usage = userInfo.usageCount || {};
+
+  ['assessment', 'relationshipDiagram', 'nursingPlan'].forEach(key => {
+    if (result[key] && typeof usage[key] === 'number') {
+      usage[key] += 1;
+    }
+  });
+
+  userInfo.usageCount = usage;
+
+  if (decrementDailyLimit && typeof userInfo.usageLimit?.remainingToday === 'number') {
+    userInfo.usageLimit.remainingToday = Math.max(0, userInfo.usageLimit.remainingToday - 1);
+  }
+
+  localStorage.setItem('userInfo', JSON.stringify(userInfo));
 }
 
 
