@@ -319,3 +319,21 @@ body {
   cursor: pointer;
   border-radius: 10px;
 }
+
+#diagramContent {
+  min-height: 400px;
+  width: 100%;
+  overflow: auto;
+}
+
+#diagramContent .mermaid {
+  width: 100% !important;
+  min-height: 400px;
+  display: block;
+}
+
+#diagramContent svg {
+  width: 100% !important;
+  height: auto !important;
+  max-width: 100% !important;
+}

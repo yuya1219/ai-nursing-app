@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const patientData = JSON.parse(localStorage.getItem('patientData')) || {};
   const assessmentResult = JSON.parse(localStorage.getItem('assessmentResult')) || {};
   const nursingPlan = JSON.parse(localStorage.getItem('nursingPlan')) || {};
+  const relationshipDiagram = JSON.parse(localStorage.getItem('relationshipDiagram')) || {};
 
   // ユーザー情報の取得（ログイン状態の確認）
   const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { subscriptionLevel: 'free' };
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
   displayPatientSummary(patientData);
   
   // 結果の表示
-  displayResults(assessmentResult, userInfo, nursingPlan);
+  displayResults(assessmentResult, userInfo, nursingPlan, relationshipDiagram);
   
   // ボタンイベントの設定
   setupButtonEvents(patientData, assessmentResult);
@@ -83,7 +84,7 @@ function displayPatientSummary(patientData) {
 /**
  * アセスメント結果、関連図、看護計画を表示する関数
  */
-function displayResults(assessmentResult, userInfo, nursingPlan) {
+function displayResults(assessmentResult, userInfo, nursingPlan, relationshipDiagram) {
   // アセスメント結果の表示
   const assessmentContent = document.getElementById('assessmentContent');
   if (assessmentResult.success && assessmentResult.assessment) {
@@ -93,24 +94,33 @@ function displayResults(assessmentResult, userInfo, nursingPlan) {
   }
   
   // 関連図の表示（サブスクリプションレベルに応じて制限）
-  const diagramContent = document.getElementById('diagramContent');
   const premiumLockMessage = document.getElementById('premiumLockMessage');
   
-  if (userInfo.subscriptionLevel === 'free') {
+  if (userInfo.subscriptionPlan === 'free' || userInfo.subscriptionPlan === 'default') {
     // 無料ユーザーの場合はロックメッセージを表示
     premiumLockMessage.style.display = 'block';
     diagramContent.innerHTML = '<div class="premium-lock"><div id="mermaidDiagram" class="mermaid">graph TD\n  A[現病名] --> B[症状]\n  B --> C[看護問題]</div></div>';
   } else {
     // プレミアムユーザーの場合は関連図を表示
     premiumLockMessage.style.display = 'none';
-    if (assessmentResult.success && assessmentResult.mermaidCode) {
-      diagramContent.innerHTML = `<div id="mermaidDiagram" class="mermaid">${assessmentResult.mermaidCode}</div>`;
+    if (relationshipDiagram.success && relationshipDiagram.mermaidCode) {
+      // diagramContent.innerHTML = `<div id="mermaidDiagram" class="mermaid">${relationshipDiagram.mermaidCode}</div>`;
+      const diagramContent = document.getElementById('diagramContent');
+      const diagram = document.createElement('div');
+      diagram.id = 'mermaidDiagram';
+      diagram.className = 'mermaid';
+      diagram.textContent = relationshipDiagram.mermaidCode; // \n によりHTMLエンティティや改行が壊れて Mermaid が解析できなくなるため文字列化。
+      diagramContent.innerHTML = '';
+      diagramContent.appendChild(diagram);
+
+
       // Mermaidの再レンダリング
       setTimeout(() => {
-        mermaid.init(undefined, document.querySelector('.mermaid'));
+        mermaid.initialize({ startOnLoad: false });
+        mermaid.init(undefined, diagram);
       }, 100);
     } else {
-      diagramContent.innerHTML = '<div class="alert alert-danger">関連図の生成に失敗しました。</div>';
+      document.getElementById("diagramContent").textContent = "関連図の生成に失敗しました。";
     }
   }
   

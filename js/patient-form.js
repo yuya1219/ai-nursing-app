@@ -266,6 +266,54 @@ document.addEventListener('DOMContentLoaded', function() {
               window.location.href = 'result.html'; // 最低限の遷移は行う
             });
           };
+
+          // 関連図の作成
+          if (assessmentResultStr && patientDataStr) {
+            const assessmentResult = JSON.parse(assessmentResultStr);
+            const assessment = assessmentResult.assessment || {};
+            const patientData = JSON.parse(patientDataStr);
+
+            fetch(gasUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'text/plain'
+              },
+              body: JSON.stringify({
+                action: "generateRelationshipDiagram",
+                assessmentData: {
+                  assessment: assessment,
+                  patientData: patientData
+                }
+              })
+            })
+              .then(response => response.json())
+              .then(relationshipDiagramData => {
+                if (relationshipDiagramData.success) {
+
+                  // usageCountを更新（resultに基づいて）
+                  updateUsageInfo(relationshipDiagramData.result); // usageLimit は更新しない（3回目）
+
+                  localStorage.setItem('relationshipDiagram', JSON.stringify({
+                    success: relationshipDiagramData.success,
+                    mermaidCode: relationshipDiagramData.mermaidCode,
+                    result: relationshipDiagramData.result
+                  })); // 関連図を保存
+                } else {
+                  console.warn('関連図の生成に失敗:', relationshipDiagramData.error);
+                  alert('関連図の生成に失敗しました: ' + relationshipDiagramData.error);
+                }
+
+                // 最後に結果画面へ遷移
+                // window.location.href = 'result.html';
+              })
+              .catch(error => {
+                console.error('関連図APIエラー:', error);
+                alert('関連図の生成中に通信エラーが発生しました。');
+                window.location.href = 'result.html'; // 最低限の遷移は行う
+              });
+          };
+
+
         } else {
           // エラー時の処理
           alert('エラーが発生しました: ' + data.error);
